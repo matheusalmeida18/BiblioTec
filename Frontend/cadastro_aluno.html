@@ -147,7 +147,7 @@
             const matricula = document.getElementById('matricula').value.trim();
 
             try {
-                const response = await fetch('http://localhost:3000/api/alunos', {
+                const response = await fetch('https://bibliotec-ltu0.onrender.com/api/alunos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nome, turma, matricula })

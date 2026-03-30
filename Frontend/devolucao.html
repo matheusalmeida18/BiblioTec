@@ -144,7 +144,7 @@
 
                 try {
                     // Envia requisição para a rota de devolução do backend
-                    const response = await fetch('http://localhost:3000/api/devolucoes', {
+                    const response = await fetch('https://bibliotec-ltu0.onrender.com/api/devolucoes', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ isbn })

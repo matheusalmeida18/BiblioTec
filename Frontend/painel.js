@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = 'https://bibliotec-ltu0.onrender.com/api';
 
 window.verificarAcesso = function() {
     const senha = document.getElementById('senhaAdmin').value.trim();
