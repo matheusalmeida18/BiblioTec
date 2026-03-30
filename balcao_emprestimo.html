@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGB - Sistema de Gestão de Biblioteca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-indigo-900 text-white flex flex-col shadow-2xl z-10">
+        <div class="p-6 flex items-center justify-center border-b border-indigo-800">
+            <i class="fa-solid fa-book-open-reader text-3xl text-indigo-400 mr-3"></i>
+            <h1 class="text-2xl font-bold tracking-wider">SGB<span class="text-indigo-400">Pro</span></h1>
+        </div>
+        
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="#" class="flex items-center px-4 py-3 bg-indigo-800 rounded-xl text-white transition-all shadow-md">
+                <i class="fa-solid fa-hand-holding text-lg w-6"></i>
+                <span class="font-medium">Empréstimos</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-indigo-200 hover:bg-indigo-800 hover:text-white rounded-xl transition-all">
+                <i class="fa-solid fa-box-archive text-lg w-6"></i>
+                <span class="font-medium">Devoluções</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-indigo-200 hover:bg-indigo-800 hover:text-white rounded-xl transition-all">
+                <i class="fa-solid fa-book text-lg w-6"></i>
+                <span class="font-medium">Acervo (Livros)</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-indigo-200 hover:bg-indigo-800 hover:text-white rounded-xl transition-all">
+                <i class="fa-solid fa-users text-lg w-6"></i>
+                <span class="font-medium">Alunos</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-indigo-800 text-sm text-indigo-300 text-center">
+            Logado como <br><span class="font-bold text-white">Bibliotecário(a)</span>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-y-auto">
+        
+        <header class="bg-white shadow-sm px-8 py-5 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-slate-700">Painel de Atendimento Rápido</h2>
+            <div class="flex items-center text-slate-500">
+                <i class="fa-regular fa-clock mr-2"></i>
+                <span id="relogio" class="font-medium">00:00:00</span>
+            </div>
+        </header>
+
+        <div class="p-8 flex-1 flex justify-center items-start pt-12">
+            
+            <div class="bg-white w-full max-w-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-10 relative overflow-hidden">
+                <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+                <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+
+                <div class="relative z-10">
+                    <div class="text-center mb-10">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4 shadow-inner">
+                            <i class="fa-solid fa-barcode text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold text-slate-800">Novo Empréstimo</h3>
+                        <p class="text-slate-500 mt-2">Utilize o leitor de código de barras para registrar.</p>
+                    </div>
+
+                    <div id="mensagem" class="hidden mb-6 p-4 rounded-xl text-center font-bold text-sm shadow-sm transition-all"></div>
+
+                    <div class="space-y-6">
+                        <div class="relative">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">1. Matrícula / Carteirinha</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fa-regular fa-id-card text-slate-400"></i>
+                                </div>
+                                <input type="text" id="inputAluno" placeholder="Bipe a carteirinha do aluno..." autofocus
+                                    class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">2. Código do Livro (ISBN)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-book text-slate-400"></i>
+                                </div>
+                                <input type="text" id="inputLivro" placeholder="Aguardando aluno..." disabled
+                                    class="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-xl text-slate-400 text-lg cursor-not-allowed transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 flex gap-4">
+                        <button id="btnLimpar" class="flex-1 py-4 px-6 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> Resetar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Relógio simples para o Header
+        setInterval(() => { document.getElementById('relogio').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+        // Lógica do Leitor
+        const inputAluno = document.getElementById('inputAluno');
+        const inputLivro = document.getElementById('inputLivro');
+        const mensagem = document.getElementById('mensagem');
+        const btnLimpar = document.getElementById('btnLimpar');
+
+        let matriculaLida = "";
+
+        inputAluno.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                matriculaLida = inputAluno.value;
+                mostrarMensagem(`<i class="fa-solid fa-check-circle mr-2"></i> Aluno identificado! Bipe o livro agora.`, 'bg-indigo-50 text-indigo-700 border border-indigo-200');
+                
+                inputLivro.disabled = false;
+                inputLivro.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                inputLivro.classList.add('bg-slate-50', 'text-slate-700', 'focus:ring-2', 'focus:ring-indigo-500', 'focus:bg-white', 'focus:outline-none');
+                inputLivro.placeholder = "Bipe o código do livro...";
+                inputLivro.focus();
+            }
+        });
+
+        inputLivro.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                let isbnLido = inputLivro.value;
+                console.log(`Enviando: Aluno ${matriculaLida} - Livro ${isbnLido}`);
+                
+                mostrarMensagem('<i class="fa-solid fa-party-horn mr-2"></i> Empréstimo registrado com sucesso!', 'bg-emerald-50 text-emerald-700 border border-emerald-200');
+                resetarTela();
+            }
+        });
+
+        function mostrarMensagem(texto, classes) {
+            mensagem.className = `mb-6 p-4 rounded-xl text-center font-bold text-sm shadow-sm transition-all block ${classes}`;
+            mensagem.innerHTML = texto;
+        }
+
+        function resetarTela() {
+            setTimeout(() => {
+                inputAluno.value = '';
+                inputLivro.value = '';
+                inputLivro.disabled = true;
+                inputLivro.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                inputLivro.classList.remove('bg-slate-50', 'text-slate-700', 'focus:ring-2', 'focus:ring-indigo-500', 'focus:bg-white', 'focus:outline-none');
+                inputLivro.placeholder = "Aguardando aluno...";
+                mensagem.className = 'hidden';
+                inputAluno.focus();
+            }, 3000);
+        }
+
+        btnLimpar.addEventListener('click', () => {
+            inputAluno.value = '';
+            inputLivro.value = '';
+            inputLivro.disabled = true;
+            inputLivro.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+            inputLivro.placeholder = "Aguardando aluno...";
+            mensagem.className = 'hidden';
+            inputAluno.focus();
+        });
+    </script>
+</body>
+</html>
