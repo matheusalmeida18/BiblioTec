@@ -32,7 +32,7 @@
 
     <aside class="w-72 bg-white text-slate-700 flex flex-col shadow-2xl z-20 relative border-r border-slate-200">
         <div class="p-8 flex items-center justify-center border-b border-slate-200 h-28 bg-slate-50">
-            <img src="logo_ieepteca_alta.png" alt="Logo IEEPteca" class="max-w-full h-auto max-h-20 object-contain">
+            <img src="logo_ieepteca_alta.png" alt="Logo IEEPteca" class="max-w-full h-auto max-h-20 object-contain" onerror="this.src='https://placehold.co/200x80?text=Logo'">
         </div>
         
         <nav class="flex-1 px-4 py-8 space-y-3 overflow-y-auto">
@@ -57,15 +57,9 @@
                 <span class="font-medium text-lg ml-2">Painel Admin</span>
             </a>
         </nav>
-
-        <div class="p-6 m-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm text-slate-600">
-            <p class="text-xs text-slate-400">Logado como</p>
-            <p class="font-bold text-slate-700 tracking-wide">Bibliotecário</p>
-        </div>
     </aside>
 
     <main class="flex-1 flex flex-col h-full overflow-y-auto relative bg-slate-50">
-        
         <header class="bg-white/80 backdrop-blur-md shadow-sm px-10 py-6 flex justify-between items-center sticky top-0 z-10">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Gestão de Acervo</h2>
@@ -100,7 +94,7 @@
                     <img id="previewCapa" src="" alt="Capa do Livro" class="w-24 h-36 object-cover rounded-lg shadow-md">
                     <div>
                         <h4 id="tituloGoogle" class="font-bold text-slate-700 text-lg">Título Encontrado</h4>
-                        <p id="autorGoogle" class="text-sm text-slate-500">Auto<label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Código da Etiqueta Interna / Tombo (Obrigatório)</label>r</p>
+                        <p id="autorGoogle" class="text-sm text-slate-500">Autor</p>
                         <p class="text-xs text-emerald-600 font-bold mt-2"><i class="fa-solid fa-check-circle"></i> Capa vinculada com sucesso!</p>
                     </div>
                 </div>
@@ -121,12 +115,11 @@
                             class="input-glow w-full px-5 py-3 bg-white border-2 border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-indigo-500 transition-all">
                     </div>
 
-                    <div>
+                    <div class="col-span-1 md:col-span-2">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Autor / Escritor</label>
                         <input type="text" id="autor" required placeholder="Ex: J.K. Rowling"
                             class="input-glow w-full px-5 py-3 bg-white border-2 border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-indigo-500 transition-all">
                     </div>
-                    
                     
                     <div class="col-span-1 md:col-span-2 mt-4 flex justify-end gap-4">
                         <button type="button" onclick="limparFormulario()" class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors">
@@ -151,16 +144,7 @@
                 </div>
             </div>
         </div>
-
-        <footer class="p-6 text-center border-t border-slate-200 bg-white/50 mt-auto">
-            <p class="text-sm text-slate-500 font-medium">© 2026 IEEP BiblioTec. Todos os direitos reservados.</p>
-            <p class="text-xs text-slate-400 mt-1 font-bold tracking-widest uppercase">
-                Desenvolvido Por: 
-                <a href="https://www.linkedin.com/in/matheus-almeida-215512bb/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors cursor-pointer">
-                    Matheus Almeida
-                </a>
-            </p>
-        </footer>
+    </main>
 
 <script>
     // 1. Relógio
@@ -176,11 +160,9 @@
         document.getElementById('linkCapaOculto').value = '';
     }
 
-    // 3. Buscar Capa e Dados no Google (VERSÃO TURBINADA)
-    // 3. Buscar Capa e Dados (SUPER VERSÃO: Google Books + Brasil API)
+    // 3. Buscar Capa e Dados no Google / Brasil API
     async function buscarCapaGoogle() {
         const isbnInput = document.getElementById('isbnLivro');
-        // Pega o valor e arranca fora qualquer traço ou espaço, deixando só os números
         const isbn = isbnInput.value.trim().replace(/\D/g, ''); 
         
         if (isbn.length < 10) {
@@ -193,7 +175,6 @@
             let autorAchado = "";
             let capaAchada = "";
 
-            // --- TENTATIVA 1: Bater na porta do Google Books ---
             const respGoogle = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
             const dadosGoogle = await respGoogle.json();
 
@@ -205,40 +186,31 @@
                     capaAchada = info.imageLinks.thumbnail.replace("http:", "https:");
                 }
             } 
-            // --- TENTATIVA 2: Se o Google falhar, bater na porta da Brasil API ---
             else {
-                console.log("Google não achou. Tentando na BrasilAPI...");
                 const respBrasil = await fetch(`https://brasilapi.com.br/api/isbn/v1/${isbn}`);
-                
-                // Se a BrasilAPI achar o livro (status 200 OK)
                 if (respBrasil.ok) {
                     const dadosBrasil = await respBrasil.json();
                     tituloAchado = dadosBrasil.title || '';
                     autorAchado = dadosBrasil.authors ? dadosBrasil.authors.join(', ') : '';
-                    capaAchada = dadosBrasil.cover_url || ''; // A BrasilAPI costuma devolver capas em alta resolução!
+                    capaAchada = dadosBrasil.cover_url || ''; 
                 }
             }
 
-            // --- RESULTADO: Se algum dos dois bancos de dados achou o livro ---
             if (tituloAchado !== "") {
                 document.getElementById('titulo').value = tituloAchado;
                 document.getElementById('autor').value = autorAchado;
                 document.getElementById('isbn').value = isbn;
 
-                // Se achou o livro, mas nenhum dos dois tinha a foto da capa:
                 if (!capaAchada) {
                     capaAchada = 'https://placehold.co/150x220?text=Sem+Capa';
                 }
 
-                // Joga na tela!
                 document.getElementById('previewCapa').src = capaAchada;
                 document.getElementById('tituloGoogle').innerText = tituloAchado;
                 document.getElementById('autorGoogle').innerText = autorAchado || 'Autor desconhecido';
                 document.getElementById('areaCapa').classList.remove('hidden');
                 document.getElementById('linkCapaOculto').value = capaAchada;
-                
             } else {
-                // Se nem o Google e nem a Brasil API acharam:
                 alert("Nenhum banco de dados encontrou esse ISBN automaticamente. Você precisará preencher os dados manualmente logo abaixo!");
             }
 
@@ -248,7 +220,6 @@
         }
     }
 
-    // Permitir "Enter" no campo de busca do Google
     document.getElementById('isbnLivro').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -263,12 +234,12 @@
     formLivro.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-const dados = {
-    isbn: document.getElementById('isbn').value.trim(),
-    titulo: document.getElementById('titulo').value.trim(),
-    autor: document.getElementById('autor').value.trim(),
-    capa_url: document.getElementById('linkCapaOculto').value 
-};
+        const dados = {
+            isbn: document.getElementById('isbn').value.trim(),
+            titulo: document.getElementById('titulo').value.trim(),
+            autor: document.getElementById('autor').value.trim(),
+            capa_url: document.getElementById('linkCapaOculto').value 
+        };
 
         try {
             const response = await fetch('https://bibliotec-ltu0.onrender.com/api/livros', {
@@ -282,7 +253,7 @@ const dados = {
                 mensagem.innerHTML = "✅ Livro cadastrado com sucesso!";
                 
                 limparFormulario();
-                carregarAcervo(); // <--- ISSO FAZ A GALERIA ATUALIZAR SOZINHA!
+                carregarAcervo(); 
             } else {
                 const errorData = await response.json();
                 mensagem.className = "mb-6 p-4 rounded-xl text-center font-bold text-sm shadow-sm border block fade-in-up bg-red-50 text-red-700 border-red-200";
@@ -310,24 +281,24 @@ const dados = {
             livros.forEach(livro => {
                 const capa = livro.capa_url || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300&auto=format&fit=crop';
                 
-const card = `
-    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 bg-white flex flex-col h-full">
-        <div class="aspect-[2/3] bg-slate-100 relative">
-            <img src="${capa}" class="w-full h-full object-cover" 
-                 onerror="this.src='https://placehold.co/150x220?text=Sem+Capa'">
-        </div>
-        <div class="p-3 flex flex-col flex-grow">
-            <h4 class="font-bold text-slate-700 text-xs truncate" title="${livro.titulo}">${livro.titulo}</h4>
-            <p class="text-[10px] text-slate-400 truncate mb-2">${livro.autor || 'Autor desconhecido'}</p>
-            
-            <div class="mt-auto pt-2 border-t border-slate-100">
-                <span class="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 rounded-md font-mono font-bold w-full text-center truncate" title="Código Interno">
-                    Cód: ${livro.codigo_barras}
-                </span>
-            </div>
-        </div>
-    </div>
-`;
+                const card = `
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 bg-white flex flex-col h-full">
+                        <div class="aspect-[2/3] bg-slate-100 relative">
+                            <img src="${capa}" class="w-full h-full object-cover" 
+                                 onerror="this.src='https://placehold.co/150x220?text=Sem+Capa'">
+                        </div>
+                        <div class="p-3 flex flex-col flex-grow">
+                            <h4 class="font-bold text-slate-700 text-xs truncate" title="${livro.titulo}">${livro.titulo}</h4>
+                            <p class="text-[10px] text-slate-400 truncate mb-2">${livro.autor || 'Autor desconhecido'}</p>
+                            
+                            <div class="mt-auto pt-2 border-t border-slate-100">
+                                <span class="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 rounded-md font-mono font-bold w-full text-center truncate" title="Código Interno">
+                                    Cód: ${livro.codigo_barras || livro.isbn || 'N/A'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
                 container.innerHTML += card;
             });
         } catch (err) {
@@ -335,9 +306,7 @@ const card = `
         }
     }
 
-    // Carrega a galeria ao abrir a página
     window.addEventListener('DOMContentLoaded', carregarAcervo);
-
 </script>
 </body>
 </html>
